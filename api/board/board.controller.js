@@ -23,7 +23,7 @@ async function getBoardById(req, res) {
         const filterBy = req.query['0']
         if (filterBy) {
 
-            let parsed = queryString.parse(filterBy, {arrayFormat: 'separator', arrayFormatSeparator: '%'});
+            let parsed = queryString.parse(filterBy, { arrayFormat: 'separator', arrayFormatSeparator: '%' });
             // parsed.labels.forEach(label => {
             //     if (label[0]==='2' && label[1]==='C') return label.substring(2)
             // })
@@ -40,21 +40,33 @@ async function getBoardById(req, res) {
     }
 }
 
+//GET DASHBOARD DATA
+async function getDashboardData(req, res) {
+    try {
+        const { boardId } = req.params
+        const chartsData = await boardService.getDashboardData(boardId)
+        res.json(chartsData)
+    } catch (err) {
+        logger.error('Failed to get dashboard data', err)
+
+    }
+}
+
 // UPDATE 
 async function updateBoard(req, res) {
     try {
         const { board, activity } = req.body
         if (activity) {
             const newActivity = {
-                txt: activity.txt,
-                byMember: activity.byMember,
-                createdAt: Date.now(),
-                card: (activity.card) ? { id: activity.card.id, title: activity.card.title } : {},
-                groupId: (activity.groupId) ? activity.groupId : null
-            }
-            // console.log('Activity from service: ', newActivity)
+                    txt: activity.txt,
+                    byMember: activity.byMember,
+                    createdAt: Date.now(),
+                    card: (activity.card) ? { id: activity.card.id, title: activity.card.title } : {},
+                    groupId: (activity.groupId) ? activity.groupId : null
+                }
+                // console.log('Activity from service: ', newActivity)
             board.activities.unshift(newActivity)
-            // console.log('Board activities from service: ', board.activities)
+                // console.log('Board activities from service: ', board.activities)
         }
         const updatedBoard = await boardService.update(board)
         res.json(updatedBoard)
@@ -95,11 +107,11 @@ async function deleteBoard(req, res) {
     }
 }
 
-
 module.exports = {
     getBoards,
     deleteBoard,
     addBoard,
     getBoardById,
-    updateBoard
+    updateBoard,
+    getDashboardData
 }
