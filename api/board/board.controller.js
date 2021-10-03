@@ -4,6 +4,7 @@ const socketService = require('../../services/socket.service')
 const boardService = require('./board.service')
 const { ObjectId } = require('bson')
 const queryString = require('query-string');
+const { Admin } = require('mongodb')
 
 // LIST
 async function getBoards(req, res) {
@@ -20,19 +21,10 @@ async function getBoards(req, res) {
 async function getBoardById(req, res) {
     try {
         const { boardId } = req.params
+        console.log('request.params: ', req.query)
         const filterBy = req.query['0']
-        if (filterBy) {
-
-            let parsed = queryString.parse(filterBy, {arrayFormat: 'separator', arrayFormatSeparator: '%'});
-            // parsed.labels.forEach(label => {
-            //     if (label[0]==='2' && label[1]==='C') return label.substring(2)
-            // })
-            // parsed.members.forEach(member => {
-            //     if (member[0]==='2' && member[1]==='C') return member[0]
-            // })
-            console.log('Filter from server: ', parsed)
-        }
-        const board = await boardService.getById(boardId)
+        const parsed = queryString.parse(filterBy, { arrayFormat: 'separator', arrayFormatSeparator: ',' });
+        const board = await boardService.getById(boardId, parsed)
         res.json(board)
     } catch (err) {
         logger.error('Failed to get board', err)

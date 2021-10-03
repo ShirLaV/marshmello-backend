@@ -4,12 +4,12 @@ const asyncLocalStorage = require('../../services/als.service')
 const logger = require('../../services/logger.service')
 
 
-async function query(filterBy) {
+async function query() {
     try {
         // console.log('Filter from backend service: ', filterBy)
-        const criteria = _buildCriteria(filterBy)
+        // const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection('board')
-        const boards = await collection.find(criteria).toArray()
+        const boards = await collection.find().toArray()
         return boards
     } catch (err) {
         logger.error('cannot find boards', err)
@@ -18,11 +18,26 @@ async function query(filterBy) {
 
 }
 
-async function getById(boardId) {
+async function getById(boardId, filterBy = {}) {
     try {
         const collection = await dbService.getCollection('board')
-        const board = collection.findOne({ '_id': ObjectId(boardId) })
-        return board
+        const board = await collection.findOne({ '_id': ObjectId(boardId) })
+        if (!Object.keys(filterBy).length) return board
+
+        if (typeof filterBy.labels === 'string') filterBy.labels = [filterBy.labels]
+        if (typeof filterBy.members === 'string') filterBy.members = [filterBy.members]
+        const filteredGroups = board.groups.map(group => {
+            const cards = group.cards.filter(card => {
+                return (!filterBy.txt || card.title.toLocaleLowerCase().includes(filterBy.txt.toLocaleLowerCase()))
+                    && (!filterBy.labels || card.labelIds?.some((curr) => filterBy.labels?.includes(curr)))
+                    && (!filterBy.members || card.members?.some(curr => filterBy.members?.includes(curr._id)))
+
+            })
+            group.cards = cards
+            return group
+        })
+        const filteredBoard = { ...board, groups: filteredGroups }
+        return filteredBoard
     } catch (err) {
         logger.error(`Error while finding board ${boardId}`, err)
         throw err
@@ -113,6 +128,9 @@ async function add(board) {
 
 function _buildCriteria(filterBy) {
     const criteria = {}
+    if (filterBy.txt) {
+        criteria.groups = { $regex: filterBy.txt, $options: 'i' }
+    }
     return criteria
 }
 
