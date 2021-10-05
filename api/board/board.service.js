@@ -67,6 +67,7 @@ async function getArchivedCards(boardId) {
                 // console.log('group.cards', group.cards)
                 group.cards.forEach(card => {
                     if (card.isArchive) {
+
                         archivedCards.push(card)
                     }
                 })
