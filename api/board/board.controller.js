@@ -21,7 +21,6 @@ async function getBoards(req, res) {
 async function getBoardById(req, res) {
     try {
         const { boardId } = req.params
-        console.log('request.params: ', req.query)
         const filterBy = req.query['0']
         const parsed = queryString.parse(filterBy, { arrayFormat: 'separator', arrayFormatSeparator: ',' });
         const board = await boardService.getById(boardId, parsed)
@@ -56,9 +55,7 @@ async function updateBoard(req, res) {
                     card: (activity.card) ? { id: activity.card.id, title: activity.card.title } : {},
                     groupId: (activity.groupId) ? activity.groupId : null
                 }
-                // console.log('Activity from service: ', newActivity)
             board.activities.unshift(newActivity)
-                // console.log('Board activities from service: ', board.activities)
         }
         const updatedBoard = await boardService.update(board)
         res.json(updatedBoard)

@@ -173,32 +173,32 @@ async function add(board) {
             labels: [{
                     id: 'l101',
                     title: '',
-                    color: '#61bd4f',
+                    color: '#7bc86c',
                 },
                 {
                     id: 'l102',
                     title: '',
-                    color: '#FF9F1A',
+                    color: '#f5dd29',
                 },
                 {
                     id: 'l103',
                     title: '',
-                    color: '#eb5a46',
+                    color: '#ffaf3f',
                 },
                 {
                     id: 'l104',
                     title: '',
-                    color: '#C377E0',
+                    color: '#ef7564',
                 },
                 {
                     id: 'l105',
                     title: '',
-                    color: '#344563',
+                    color: '#cd8de5',
                 },
                 {
                     id: 'l106',
                     title: '',
-                    color: '#FF78CB',
+                    color: '#517dab',
                 },
             ],
             members: [board.createdBy],
