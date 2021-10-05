@@ -42,18 +42,6 @@ async function getById(boardId, filterBy = {}) {
                         card.members && card.members.some((curr) => filterBy.members.includes(curr._id)))
                 );
             });
-            // const cards = group.cards.filter((card) => {
-            //     return (!card.isArchive &&
-            //         (!filterBy.txt ||
-            //             card.title
-            //             .toLocaleLowerCase()
-            //             .includes(filterBy.txt.toLocaleLowerCase())) &&
-            //         (!filterBy.labels ||
-            //             card.labelIds ? .some((curr) => filterBy.labels ? .includes(curr))) &&
-            //         (!filterBy.members ||
-            //             card.members ? .some((curr) => filterBy.members ? .includes(curr._id)))
-            //     );
-            // });
             group.cards = cards;
             return group;
         });
@@ -66,6 +54,26 @@ async function getById(boardId, filterBy = {}) {
         logger.error(`Error while finding board ${boardId}`, err);
         throw err;
     }
+}
+
+async function getArchivedCards(boardId) {
+    const collection = await dbService.getCollection('board');
+    const board = await collection.findOne({
+        _id: ObjectId(boardId),
+    });
+    const archivedCards = []
+    board.groups.forEach(group => {
+            if (!group.isArchive) {
+                // console.log('group.cards', group.cards)
+                group.cards.forEach(card => {
+                    if (card.isArchive) {
+                        archivedCards.push(card)
+                    }
+                })
+            }
+        })
+        // console.log('archived cards', archivedCards)
+    return archivedCards
 }
 
 async function getDashboardData(boardId) {
@@ -123,6 +131,7 @@ async function getDashboardData(boardId) {
 }
 
 async function update(board) {
+    console.log('board after save', board)
     try {
         let boardId = ObjectId(board._id);
         delete board._id;
@@ -232,4 +241,5 @@ module.exports = {
     getById,
     update,
     getDashboardData,
+    getArchivedCards
 };

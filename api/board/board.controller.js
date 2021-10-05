@@ -40,7 +40,17 @@ async function getDashboardData(req, res) {
         res.json(chartsData)
     } catch (err) {
         logger.error('Failed to get dashboard data', err)
+    }
+}
 
+//GET ARCHIVED CARDS 
+async function getArchivedCards(req, res) {
+    try {
+        const { boardId } = req.params
+        const archivedCards = await boardService.getArchivedCards(boardId)
+        res.json(archivedCards)
+    } catch (err) {
+        logger.error('Failed to get archived cards', err)
     }
 }
 
@@ -105,5 +115,6 @@ module.exports = {
     addBoard,
     getBoardById,
     updateBoard,
-    getDashboardData
+    getDashboardData,
+    getArchivedCards
 }
