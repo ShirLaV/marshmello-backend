@@ -34,8 +34,8 @@ async function getById(boardId, filterBy = {}) {
                 return (!card.isArchive &&
                     (!filterBy.txt ||
                         card.title
-                        .toLocaleLowerCase()
-                        .includes(filterBy.txt.toLocaleLowerCase())) &&
+                            .toLocaleLowerCase()
+                            .includes(filterBy.txt.toLocaleLowerCase())) &&
                     (!filterBy.labels ||
                         (card.labelIds && card.labelIds.some((curr) => filterBy.labels.includes(curr)))) &&
                     (!filterBy.members ||
@@ -151,18 +151,19 @@ async function update(board) {
 
 async function remove(boardId) {
     try {
-        const store = asyncLocalStorage.getStore();
-        const {
-            userId,
-            isAdmin
-        } = store;
+        // const store = asyncLocalStorage.getStore();
+        // const {
+        //     userId,
+        //     isAdmin
+        // } = store;
         const collection = await dbService.getCollection('board');
         // remove only if user is owner/admin
-        const criteria = {
-            _id: ObjectId(boardId),
-        };
-        if (!isAdmin) criteria.byUserId = ObjectId(userId);
-        await collection.deleteOne(criteria);
+        // const criteria = {
+        //     _id: ObjectId(boardId),
+        // };
+        // if (!isAdmin) criteria.byUserId = ObjectId(userId);
+        console.log('boardId - service: ', boardId)
+        await collection.deleteOne({ '_id': ObjectId(boardId) });
     } catch (err) {
         logger.error(`cannot remove board ${boardId}`, err);
         throw err;
@@ -180,35 +181,35 @@ async function add(board) {
             createdBy: board.createdBy,
             groups: [],
             labels: [{
-                    id: 'l101',
-                    title: '',
-                    color: '#7bc86c',
-                },
-                {
-                    id: 'l102',
-                    title: '',
-                    color: '#f5dd29',
-                },
-                {
-                    id: 'l103',
-                    title: '',
-                    color: '#ffaf3f',
-                },
-                {
-                    id: 'l104',
-                    title: '',
-                    color: '#ef7564',
-                },
-                {
-                    id: 'l105',
-                    title: '',
-                    color: '#cd8de5',
-                },
-                {
-                    id: 'l106',
-                    title: '',
-                    color: '#517dab',
-                },
+                id: 'l101',
+                title: '',
+                color: '#7bc86c',
+            },
+            {
+                id: 'l102',
+                title: '',
+                color: '#f5dd29',
+            },
+            {
+                id: 'l103',
+                title: '',
+                color: '#ffaf3f',
+            },
+            {
+                id: 'l104',
+                title: '',
+                color: '#ef7564',
+            },
+            {
+                id: 'l105',
+                title: '',
+                color: '#cd8de5',
+            },
+            {
+                id: 'l106',
+                title: '',
+                color: '#517dab',
+            },
             ],
             members: [board.createdBy],
             activities: [],

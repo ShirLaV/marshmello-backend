@@ -59,12 +59,12 @@ async function updateBoard(req, res) {
         const { board, activity } = req.body
         if (activity) {
             const newActivity = {
-                    txt: activity.txt,
-                    byMember: activity.byMember,
-                    createdAt: Date.now(),
-                    card: (activity.card) ? { id: activity.card.id, title: activity.card.title } : {},
-                    groupId: (activity.groupId) ? activity.groupId : null
-                }
+                txt: activity.txt,
+                byMember: activity.byMember,
+                createdAt: Date.now(),
+                card: (activity.card) ? { id: activity.card.id, title: activity.card.title } : {},
+                groupId: (activity.groupId) ? activity.groupId : null
+            }
             board.activities.unshift(newActivity)
         }
         const updatedBoard = await boardService.update(board)
@@ -98,7 +98,9 @@ async function addBoard(req, res) {
 // REMOVE
 async function deleteBoard(req, res) {
     try {
-        await boardService.remove(req.params.id)
+        const { boardId } = req.params
+        console.log('boardId - controller: ', boardId)
+        await boardService.remove(boardId)
         res.send({ msg: 'Deleted successfully' })
     } catch (err) {
         logger.error('Failed to delete board', err)
