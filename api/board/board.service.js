@@ -63,17 +63,17 @@ async function getArchivedCards(boardId) {
     });
     const archivedCards = []
     board.groups.forEach(group => {
-            if (!group.isArchive) {
-                // console.log('group.cards', group.cards)
-                group.cards.forEach(card => {
-                    if (card.isArchive) {
-
-                        archivedCards.push(card)
-                    }
-                })
-            }
-        })
-        // console.log('archived cards', archivedCards)
+        if (!group.isArchive) {
+            // console.log('group.cards', group.cards)
+            group.cards.forEach(card => {
+                if (card.isArchive) {
+                    console.log('card is archive', card)
+                    archivedCards.push(card)
+                }
+            })
+        }
+    })
+    console.log('archived cards', archivedCards)
     return archivedCards
 }
 
@@ -132,7 +132,6 @@ async function getDashboardData(boardId) {
 }
 
 async function update(board) {
-    console.log('board after save', board)
     try {
         let boardId = ObjectId(board._id);
         delete board._id;
@@ -214,7 +213,7 @@ async function add(board) {
             members: [board.createdBy],
             activities: [],
         };
-        console.log('Board from server: ', boardToSave);
+        // console.log('Board from server: ', boardToSave);
         const collection = await dbService.getCollection('board');
         await collection.insertOne(boardToSave);
         return boardToSave;
