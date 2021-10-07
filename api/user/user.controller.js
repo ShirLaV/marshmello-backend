@@ -49,7 +49,6 @@ function addUserMention(req, res) {
     const mention = req.body
     const { id } = req.params
     userService.addUserMention(id, mention)
-
 }
 
 module.exports = {
