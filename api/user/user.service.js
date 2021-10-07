@@ -5,13 +5,14 @@ const ObjectId = require('mongodb').ObjectId
 
 module.exports = {
     query,
-    // getById,
+    getById,
     getByUsername,
     remove,
     update,
     add,
     getLoggedinUser,
-    getMiniUser
+    getMiniUser,
+    addUserMention
 }
 
 async function query(filterBy = {}) {
@@ -22,8 +23,8 @@ async function query(filterBy = {}) {
         users = users.map(user => {
             delete user.password
             user.createdAt = ObjectId(user._id).getTimestamp()
-            // Returning fake fresh data
-            // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
+                // Returning fake fresh data
+                // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
             return user
         })
         return users
@@ -33,24 +34,19 @@ async function query(filterBy = {}) {
     }
 }
 
-// async function getById(userId) {
-//     try {
-//         const collection = await dbService.getCollection('user')
-//         const user = await collection.findOne({ '_id': ObjectId(userId) })
-//         delete user.password
+async function getById(userId) {
+    try {
+        const collection = await dbService.getCollection('user')
+        const user = await collection.findOne({ '_id': ObjectId(userId) })
+        delete user.password
 
-//         user.givenReviews = await reviewService.query({ byUserId: ObjectId(user._id) })
-//         user.givenReviews = user.givenReviews.map(review => {
-//             delete review.byUser
-//             return review
-//         })
+        return user
+    } catch (err) {
+        logger.error(`while finding user ${userId}`, err)
+        throw err
+    }
+}
 
-//         return user
-//     } catch (err) {
-//         logger.error(`while finding user ${userId}`, err)
-//         throw err
-//     }
-// }
 async function getByUsername(username) {
     try {
         const collection = await dbService.getCollection('user')
@@ -79,9 +75,14 @@ async function update(user) {
             _id: ObjectId(user._id), // needed for the returnd obj
             username: user.username,
             fullname: user.fullname,
+            password: user.password,
+            mentions: user.mentions,
+            imgUrl: user.imgUrl,
+            boards: user.boards
         }
         const collection = await dbService.getCollection('user')
         await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
+            // console.log('user after update', userToSave)
         return userToSave;
     } catch (err) {
         logger.error(`cannot update user ${user._id}`, err)
@@ -112,8 +113,7 @@ function _buildCriteria(filterBy) {
     const criteria = {}
     if (filterBy.txt) {
         const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
-        criteria.$or = [
-            {
+        criteria.$or = [{
                 username: txtCriteria
             },
             {
@@ -137,6 +137,11 @@ function getMiniUser() {
     return { _id: fullUser._id, fullname: fullUser.fullname, imgUrl: fullUser.imgUrl }
 }
 
-
-
-
+async function addUserMention(userId, mention) {
+    console.log('userId', userId)
+    const collection = await dbService.getCollection('user')
+    const user = await collection.findOne({ '_id': ObjectId(userId) })
+    user.mentions = user.mentions ? user.mentions : [];
+    user.mentions.unshift(mention)
+    update(user)
+}
