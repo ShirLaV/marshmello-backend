@@ -35,8 +35,9 @@ async function deleteUser(req, res) {
 async function updateUser(req, res) {
     try {
         const user = req.body
+        console.log('user in controller', user)
         const savedUser = await userService.update(user)
-        
+
         res.send(savedUser)
     } catch (err) {
         logger.error('Failed to update user', err)
@@ -44,9 +45,17 @@ async function updateUser(req, res) {
     }
 }
 
+function addUserMention(req, res) {
+    const mention = req.body
+    const { id } = req.params
+    userService.addUserMention(id, mention)
+
+}
+
 module.exports = {
     getUser,
     getUsers,
     deleteUser,
     updateUser,
+    addUserMention
 }
