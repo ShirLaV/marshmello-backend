@@ -24,7 +24,7 @@ async function googleLogin(tokenId) {
     async function verify() {
         const ticket = await googleUser.verifyIdToken({
             idToken: tokenId,
-            audience: '640315421255-e4mv3dirnt2lbm4ati92b1euclri0j8d.apps.googleusercontent.com'
+            audience: '209268489709-ofnqpgb55aikiprlelkbiafntgld4mhg.apps.googleusercontent.com'
         })
         const payload = ticket.getPayload()
         const userFullname = payload['name']
