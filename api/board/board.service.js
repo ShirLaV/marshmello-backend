@@ -34,8 +34,8 @@ async function getById(boardId, filterBy = {}) {
                 return (!card.isArchive &&
                     (!filterBy.txt ||
                         card.title
-                            .toLocaleLowerCase()
-                            .includes(filterBy.txt.toLocaleLowerCase())) &&
+                        .toLocaleLowerCase()
+                        .includes(filterBy.txt.toLocaleLowerCase())) &&
                     (!filterBy.labels ||
                         (card.labelIds && card.labelIds.some((curr) => filterBy.labels.includes(curr)))) &&
                     (!filterBy.members ||
@@ -82,15 +82,12 @@ async function getDashboardData(boardId) {
     const chartsData = {
         groupsCount: 0,
         cardsCount: 0,
+        overDueCount: 0,
         tasksPerMemberMap: {},
         tasksPerLabelMap: {},
         tasks: [],
     };
-    if (board.members) {
-        board.members.forEach((member) => {
-            chartsData.tasksPerMemberMap[member.fullname] = 0;
-        });
-    }
+
     if (board.labels) {
         board.labels.forEach((label) => {
             chartsData.tasksPerLabelMap[label.title] = 0;
@@ -105,6 +102,10 @@ async function getDashboardData(boardId) {
                     if (!card.isArchive) {
                         chartsData.cardsCount = chartsData.cardsCount + 1;
                         if (card.dueDate) {
+                            if (card.dueDate - Date.now() < 0 && !card.isComplete) {
+                                chartsData.overDueCount++;
+                            }
+
                             chartsData.tasks.push({
                                 id: card.id,
                                 name: card.title,
@@ -114,7 +115,8 @@ async function getDashboardData(boardId) {
                         }
                         if (card.members) {
                             card.members.forEach((member) => {
-                                chartsData.tasksPerMemberMap[member.fullname]++;
+                                chartsData.tasksPerMemberMap[member.fullname] = chartsData.tasksPerMemberMap[member.fullname] ? chartsData.tasksPerMemberMap[member.fullname]++ : 1;
+                                // chartsData.tasksPerMemberMap[member.fullname]++;
                             });
                         }
                         if (card.labelIds) {
@@ -181,35 +183,35 @@ async function add(board) {
             createdBy: board.createdBy,
             groups: [],
             labels: [{
-                id: 'l101',
-                title: '',
-                color: '#7bc86c',
-            },
-            {
-                id: 'l102',
-                title: '',
-                color: '#f5dd29',
-            },
-            {
-                id: 'l103',
-                title: '',
-                color: '#ffaf3f',
-            },
-            {
-                id: 'l104',
-                title: '',
-                color: '#ef7564',
-            },
-            {
-                id: 'l105',
-                title: '',
-                color: '#cd8de5',
-            },
-            {
-                id: 'l106',
-                title: '',
-                color: '#517dab',
-            },
+                    id: 'l101',
+                    title: '',
+                    color: '#7bc86c',
+                },
+                {
+                    id: 'l102',
+                    title: '',
+                    color: '#f5dd29',
+                },
+                {
+                    id: 'l103',
+                    title: '',
+                    color: '#ffaf3f',
+                },
+                {
+                    id: 'l104',
+                    title: '',
+                    color: '#ef7564',
+                },
+                {
+                    id: 'l105',
+                    title: '',
+                    color: '#cd8de5',
+                },
+                {
+                    id: 'l106',
+                    title: '',
+                    color: '#517dab',
+                },
             ],
             members: [board.createdBy],
             activities: [],
