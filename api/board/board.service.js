@@ -115,7 +115,7 @@ async function getDashboardData(boardId) {
                         }
                         if (card.members) {
                             card.members.forEach((member) => {
-                                chartsData.tasksPerMemberMap[member.fullname] = chartsData.tasksPerMemberMap[member.fullname] ? chartsData.tasksPerMemberMap[member.fullname]++ : 1;
+                                chartsData.tasksPerMemberMap[member.fullname] = chartsData.tasksPerMemberMap[member.fullname] ? chartsData.tasksPerMemberMap[member.fullname] + 1 : 1;
                                 // chartsData.tasksPerMemberMap[member.fullname]++;
                             });
                         }
