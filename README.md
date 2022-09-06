@@ -1,7 +1,7 @@
 # marshmello-backend
 
 ## _Introduction_
-A Trello-clone app - Finel project for Coding Academy bootcamp
+A Trello-clone app - Finel project for Coding Academy bootcamp.
 This is the backend repository of the app, to see the frontend go to:
 https://github.com/ShirLaV/marshmello-frontend
 
